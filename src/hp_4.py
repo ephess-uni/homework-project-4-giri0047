@@ -61,8 +61,8 @@ if __name__ == '__main__':
     except ImportError:
         from util import get_data_file_path
 
-    # Replace 'book_returns_short.csv' with 'book_returns.csv' for the full dataset
-    BOOK_RETURNS_PATH = get_data_file_path('book_returns_short.csv')
+    # Use the full dataset 'book_returns.csv'
+    BOOK_RETURNS_PATH = get_data_file_path('book_returns.csv')
     OUTFILE = 'book_fees.csv'
 
     fees_report(BOOK_RETURNS_PATH, OUTFILE)
@@ -70,4 +70,3 @@ if __name__ == '__main__':
     # Print the data written to the outfile
     with open(OUTFILE) as f:
         print(f.read())
-
