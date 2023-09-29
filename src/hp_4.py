@@ -1,4 +1,3 @@
-# hp_4.py
 from datetime import datetime, timedelta
 from csv import DictReader, DictWriter
 from collections import defaultdict
@@ -41,9 +40,9 @@ def fees_report(infile, outfile):
     with open(infile, 'r') as csv_file:
         reader = DictReader(csv_file)
         for row in reader:
-            date_checkout = datetime.strptime(row['date_checkout'], '%m/%d/%Y')
-            date_due = datetime.strptime(row['date_due'], '%m/%d/%Y')
-            date_returned = datetime.strptime(row['date_returned'], '%m/%d/%y')
+            date_checkout = datetime.strptime(row['date_checkout'], '%m/%d/%Y')  # Updated date format
+            date_due = datetime.strptime(row['date_due'], '%m/%d/%Y')  # Updated date format
+            date_returned = datetime.strptime(row['date_returned'], '%m/%d/%y')  # Updated date format
             
             if date_returned > date_due:
                 days_late = (date_returned - date_due).days
