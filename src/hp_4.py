@@ -46,26 +46,25 @@ def add_date_range(values, start_date):
 
 
 def fees_report(infile, outfile):
-    """Calculates late fees per patron id and writes a summary report to
-    outfile."""
-    def calculate_late_fee(date_returned, date_due):
-        if date_returned > date_due:
-            days_late = (date_returned - date_due).days
-            return days_late * 0.25
-        return 0.0
+    with open(infile, mode='r') as file:
+        reader = DictReader(file)
+        fees = defaultdict(float)
 
-    late_fees = defaultdict(float)
-    with open(infile, 'r') as csv_file:
-        reader = DictReader(csv_file)
         for row in reader:
-            date_returned = datetime.strptime(row['date_returned'], '%m/%d/%y')
-            date_due = datetime.strptime(row['date_due'], '%m/%d/%y')
-            late_fee = calculate_late_fee(date_returned, date_due)
-            late_fees[row['patron_id']] += late_fee
+            # Parse date strings with the correct format
+            date_returned = datetime.strptime(row['date_returned'], '%m/%d/%Y')
+            date_due = datetime.strptime(row['date_due'], '%m/%d/%Y')
 
-    with open(outfile, 'w', newline='') as out_file:
-        fieldnames = ['patron_id', 'late_fees']
-        writer = DictWriter(out_file, fieldnames=fieldnames)
+            if date_returned > date_due:
+                days_late = (date_returned - date_due).days
+                late_fee = days_late * 0.25
+                patron_id = row['patron_id']
+                fees[patron_id] += late_fee
+
+    with open(outfile, mode='w', newline='') as file:
+        writer = DictWriter(file, fieldnames=['patron_id', 'late_fees'])
         writer.writeheader()
-        for patron_id, late_fee in late_fees.items():
-            writer.writerow({'patron_id': patron_id, 'late_fees': round(late_fee, 2)})
+        for patron_id, late_fee in fees.items():
+            # Format late_fee with 2 decimal places
+            late_fee_str = f'{late_fee:.2f}'
+            writer.writerow({'patron_id': patron_id, 'late_fees': late_fee_str})
